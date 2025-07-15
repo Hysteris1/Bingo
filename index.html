@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
-  <title>Wander-Bingo BLB 2025</title>
+  <title>Wander-Bingo 2025 BLB</title>
   <style>
     body {
       font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -62,6 +62,16 @@
       background: #3498db;
       color: white;
     }
+    .header-cell {
+      background: #185a9d;
+      color: white;
+      font-weight: bold;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      padding: 10px;
+      font-size: 1rem;
+      user-select: none;
+    }
     .congrats {
       position: fixed;
       top: 50%;
@@ -86,8 +96,14 @@
 </head>
 <body>
   <div class="container">
-    <h1>Wanderbingo BLB 2025</h1>
-    <div class="grid" id="bingoGrid"></div>
+    <h1>Wander-Bingo 2025 BLB</h1>
+    <div class="grid" id="bingoGrid">
+      <div class="header-cell">B</div>
+      <div class="header-cell">I</div>
+      <div class="header-cell">N</div>
+      <div class="header-cell">G</div>
+      <div class="header-cell">O</div>
+    </div>
   </div>
   <div class="congrats" id="congratsMessage">🎉 BINGO! 🎉</div>
   <audio id="applauseSound" src="https://www.soundjay.com/human/applause-8.mp3" preload="auto"></audio>
@@ -98,7 +114,7 @@
       "Inline-Fahrer", "Fahrradfahrer", "Schienen", "Wanderstock", "Schwan",
       "Kanu", "Jogger", "E-Bike", "Feldweg", "Wanderkarte",
       "Motorradfahrer mit Schnäuzer", "Pferd", "Ziege", "Huhn/Hahn", "Zechenturm",
-      "Standup Paddel", "T-Shirt von Stauder", "Kohlewagen vom Bergbau", "Eis im Hörnchen", "Currywurst"
+      "Kohlewagen vom Bergbau", "Eis im Hörnchen", "Currywurst", "Standup Paddel", "T-Shirt von Stauder"
     ];
 
     function shuffle(array) {
@@ -106,18 +122,20 @@
     }
 
     function checkBingo(grid) {
-      const cells = [...grid.children];
+      const cells = [...grid.querySelectorAll('.cell')];
       const selected = cells.map(cell => cell.classList.contains("selected"));
       const lines = [];
 
       for (let i = 0; i < 5; i++) {
         lines.push(selected.slice(i * 5, i * 5 + 5)); // Rows
-        lines.push([0, 1, 2, 3, 4].map(j => selected[i + j * 5])); // Columns
+      }
+      for (let j = 0; j < 5; j++) {
+        lines.push([0, 1, 2, 3, 4].map(i => selected[i * 5 + j])); // Columns
       }
       lines.push([0, 6, 12, 18, 24].map(i => selected[i])); // Diagonal
       lines.push([4, 8, 12, 16, 20].map(i => selected[i])); // Diagonal
 
-      return lines.some(line => line.filter(Boolean).length >= 4);
+      return lines.some(line => line.filter(Boolean).length >= 5);
     }
 
     const shuffled = shuffle(terms).slice(0, 25);
