@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes" />
+  <title>Wanderbingo BLB 2025</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: linear-gradient(135deg, #e0f7fa, #ffffff);
+      margin: 0;
+      padding: 0;
+      text-align: center;
+      overflow-x: hidden;
+      color: #2c3e50;
+    }
+    .container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+      min-height: 100vh;
+    }
+    h1 {
+      margin-bottom: 20px;
+      font-size: 2em;
+      font-weight: bold;
+      background: linear-gradient(90deg, #43cea2, #185a9d);
+      color: white;
+      padding: 12px 24px;
+      border-radius: 10px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      animation: fadeInDown 1s ease-out;
+    }
+    @keyframes fadeInDown {
+      from { opacity: 0; transform: translateY(-20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px;
+      max-width: 90vw;
+      width: 350px;
+    }
+    .cell {
+      background: #ffffff;
+      border: 2px solid #3498db;
+      border-radius: 8px;
+      padding: 10px;
+      cursor: pointer;
+      transition: background 0.3s, color 0.3s, transform 0.2s;
+      font-size: 0.85rem;
+      user-select: none;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    }
+    .cell:hover {
+      transform: scale(1.05);
+    }
+    .cell.selected {
+      background: #3498db;
+      color: white;
+    }
+    .congrats {
+      position: fixed;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      background: #2ecc71;
+      color: white;
+      padding: 20px 30px;
+      border-radius: 12px;
+      font-size: 1.8rem;
+      font-weight: bold;
+      box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+      display: none;
+      z-index: 1000;
+      animation: pulse 1s ease-in-out infinite alternate;
+    }
+    @keyframes pulse {
+      from { transform: translate(-50%, -50%) scale(1); }
+      to { transform: translate(-50%, -50%) scale(1.05); }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Wanderbingo BLB 2025</h1>
+    <div class="grid" id="bingoGrid"></div>
+  </div>
+  <div class="congrats" id="congratsMessage">🎉 BINGO! 🎉</div>
+  <audio id="applauseSound" src="https://www.soundjay.com/human/applause-8.mp3" preload="auto"></audio>
+
+  <script>
+    const terms = [
+      "Boot", "Sitzbank", "Boje", "Pommesschranke", "Stauder-Bier",
+      "Inline-Fahrer", "Fahrradfahrer", "Schienen", "Wanderstock", "Schwan",
+      "Kanu", "Jogger", "E-Bike", "Feldweg", "Wanderkarte",
+      "Motorradfahrer mit Schnäuzer", "Pferd", "Ziege", "Huhn/Hahn", "Zechenturm",
+      "Standup Paddel", "T-Shirt von Stauder", "Kohlewagen vom Bergbau", "Eis im Hörnchen", "Currywurst"
+    ];
+
+    function shuffle(array) {
+      return array.sort(() => 0.5 - Math.random());
+    }
+
+    function checkBingo(grid) {
+      const cells = [...grid.children];
+      const selected = cells.map(cell => cell.classList.contains("selected"));
+      const lines = [];
+
+      for (let i = 0; i < 5; i++) {
+        lines.push(selected.slice(i * 5, i * 5 + 5)); // Rows
+        lines.push([0, 1, 2, 3, 4].map(j => selected[i + j * 5])); // Columns
+      }
+      lines.push([0, 6, 12, 18, 24].map(i => selected[i])); // Diagonal
+      lines.push([4, 8, 12, 16, 20].map(i => selected[i])); // Diagonal
+
+      return lines.some(line => line.filter(Boolean).length >= 4);
+    }
+
+    const shuffled = shuffle(terms).slice(0, 25);
+    const grid = document.getElementById("bingoGrid");
+    const congrats = document.getElementById("congratsMessage");
+    const applause = document.getElementById("applauseSound");
+
+    shuffled.forEach(term => {
+      const cell = document.createElement("div");
+      cell.className = "cell";
+      cell.textContent = term;
+      cell.addEventListener("click", () => {
+        cell.classList.toggle("selected");
+        if (checkBingo(grid)) {
+          congrats.style.display = "block";
+          applause.play();
+          setTimeout(() => {
+            congrats.style.display = "none";
+          }, 6000);
+        }
+      });
+      grid.appendChild(cell);
+    });
+  </script>
+</body>
+</html>
